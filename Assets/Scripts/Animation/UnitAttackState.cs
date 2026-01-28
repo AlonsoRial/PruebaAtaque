@@ -9,6 +9,9 @@ public class UnitAttackState : StateMachineBehaviour
 
     public float stopAttackingDistance = 1.2f;
 
+    public float attackRate = 1f;
+    private float attackTimer;
+
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent = animator.GetComponent<NavMeshAgent>();
@@ -21,18 +24,24 @@ public class UnitAttackState : StateMachineBehaviour
         if (attackController.targetToAttack != null && animator.transform.GetComponent<UnitMovement>().isCommandedToMove == false ) 
         {
 
-            LookAtPlayer();
+            LookAtTarget();
 
             //Keep moving towards enemy
             agent.SetDestination(attackController.targetToAttack.position);
 
-            var damageToInflick = attackController.unitDamage;
 
-            //Actually Attack Unit
-            attackController.targetToAttack.GetComponent<Enemy>().ReceieveDamage(damageToInflick);
+            if (attackTimer <= 0)
+            {
+                Attack();
+                attackTimer = 1 / attackRate;
+            }
+            else 
+            {
+                attackTimer -= Time.deltaTime;
+            }
 
-            //Should unit still attack
-            float distanceFromTarge = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
+                //Should unit still attack
+                float distanceFromTarge = Vector3.Distance(attackController.targetToAttack.position, animator.transform.position);
 
             if (distanceFromTarge > stopAttackingDistance || attackController.targetToAttack == null)
             {
@@ -42,7 +51,16 @@ public class UnitAttackState : StateMachineBehaviour
         }
     }
 
-    private void LookAtPlayer()
+    private void Attack() 
+    {
+
+        var damageToInflick = attackController.unitDamage;
+
+        //Actually Attack Unit
+        attackController.targetToAttack.GetComponent<Unit>().TakeDamage(damageToInflick);
+    }
+
+    private void LookAtTarget()
     {
         Vector3 direction = attackController.targetToAttack.position - agent.transform.position;
         agent.transform.rotation = Quaternion.LookRotation(direction); //OJITO A ESTO POR QUE PUEDE SER LA CAUSA DEL PROBLEMA

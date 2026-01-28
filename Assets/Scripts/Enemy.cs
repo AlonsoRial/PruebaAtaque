@@ -4,7 +4,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public int health;
-    internal void ReceieveDamage(int damageToInflick)
+    internal void TakeDamage(int damageToInflick)
     {
         throw new NotImplementedException();
     }

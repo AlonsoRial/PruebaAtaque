@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -17,5 +18,10 @@ public class Unit : MonoBehaviour
     void Update()
     {
         
+    }
+
+    internal void TakeDamage(int damageToInflick)
+    {
+        throw new NotImplementedException();
     }
 }
