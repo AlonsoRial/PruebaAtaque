@@ -125,12 +125,12 @@ NavMeshAgent:
   m_GameObject: {fileID: 7048525993229256288}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
+  m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -153,6 +153,7 @@ MonoBehaviour:
   ground:
     serializedVersion: 2
     m_Bits: 8
+  isCommandedToMove: 0
 --- !u!114 &1867484062481800826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,6 +179,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetToAttack: {fileID: 0}
+  idleStateMaterial: {fileID: 2100000, guid: 54bea8bad15514b40a8015032a2fb0e4, type: 2}
+  followStateMaterial: {fileID: 2100000, guid: fd8815ad86bb7404ab0689e2afb88d90, type: 2}
+  attackStateMaterial: {fileID: 2100000, guid: 2a84874b94d3bd2488bb228874bb9c02, type: 2}
 --- !u!95 &6028801529385395967
 Animator:
   serializedVersion: 7

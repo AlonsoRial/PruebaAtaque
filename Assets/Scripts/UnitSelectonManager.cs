@@ -109,7 +109,7 @@ public class UnitSelectonManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, attackable))
             {
                 attackCursorVisible = true;
-
+                Debug.Log("Enemy Hoverd with mouse");
                 if (InputSingleton.Instance.inputActions.Player.Attack.WasPressedThisFrame())
                 {
                     Transform target = hit.transform;
