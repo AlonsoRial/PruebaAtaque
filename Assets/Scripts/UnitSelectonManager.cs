@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class UnitSelectonManager : MonoBehaviour
 {
@@ -13,12 +14,15 @@ public class UnitSelectonManager : MonoBehaviour
 
     public LayerMask clickable;
     public LayerMask ground;
+    public LayerMask attackable;
     public GameObject groundMaker;
 
     private Camera cam;
 
     private Material mateDefault;
    public Material mateSelected;
+
+    public bool attackCursorVisible;
 
     private void Awake()
     {
@@ -92,6 +96,49 @@ public class UnitSelectonManager : MonoBehaviour
             }
         }
 
+
+
+        //Attack Targe
+
+        if (unitsSelected.Count>0 && AtleastOneOffensiveUnit(unitsSelected))
+        {
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>());
+
+            //Si clicka a un objecto clickable
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, attackable))
+            {
+                attackCursorVisible = true;
+
+                if (InputSingleton.Instance.inputActions.Player.Attack.WasPressedThisFrame())
+                {
+                    Transform target = hit.transform;
+                    foreach (GameObject unit in unitsSelected)
+                    {
+                        if (unit.GetComponent<AttackController>())
+                        {
+                            unit.GetComponent<AttackController>().targetToAttack = target;
+                        }
+                    }
+                }
+            }
+            else 
+            {
+                attackCursorVisible=false;
+            }
+        }
+    }
+
+    private bool AtleastOneOffensiveUnit(List<GameObject> unitsSelected)
+    {
+        foreach (GameObject unit in unitsSelected)
+        {
+            if (unit.GetComponent<AttackController>())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void MultiSelect(GameObject gameObject)
