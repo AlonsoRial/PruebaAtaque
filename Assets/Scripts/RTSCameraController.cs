@@ -14,13 +14,12 @@ public class RTSCameraController : MonoBehaviour
     [SerializeField] Transform cameraTransform;
     public Transform followTransform;
     Vector3 newPosition;
-    Vector3 dragStartPosition;
-    Vector3 dragCurrentPosition;
+
 
     [Header("Optional Functionality")]
     [SerializeField] bool moveWithKeyboad;
     [SerializeField] bool moveWithEdgeScrolling;
-    [SerializeField] bool moveWithMouseDrag;
+
 
     [Header("Keyboard Movement")]
     [SerializeField] float fastSpeed = 0.05f;
@@ -68,7 +67,7 @@ public class RTSCameraController : MonoBehaviour
             HandleCameraMovement();
         }
 
-        if (/*Input.GetKeyDown(KeyCode.Escape) */ InputSingleton.Instance.inputActions.Player.Salir.WasPressedThisFrame()  ) 
+        if ( InputSingleton.Instance.inputActions.Player.Salir.WasPressedThisFrame()  ) 
         {
             followTransform = null;
         }
@@ -76,11 +75,7 @@ public class RTSCameraController : MonoBehaviour
 
     void HandleCameraMovement()
     {
-        // Mouse Drag
-        if (moveWithMouseDrag)
-        {
-            HandleMouseDragInput();
-        }
+
 
         // Keyboard Control
         if (moveWithKeyboad)
@@ -95,36 +90,11 @@ public class RTSCameraController : MonoBehaviour
             }
 
 
-
-
-            // newPosition += InputSingleton.Instance.inputActions.Player.Move.ReadValue<Vector3>() * movementSpeed;
-
             Vector2 input = InputSingleton.Instance.inputActions.Player.Move.ReadValue<Vector2>();
             Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
 
             newPosition += moveDir * movementSpeed;
 
-
-       
-            /*
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
-                newPosition += (transform.forward * movementSpeed);
-            }
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
-                newPosition += (transform.forward * -movementSpeed);
-            }
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            {
-                newPosition += (transform.right * movementSpeed);
-            }
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            {
-                newPosition += (transform.right * -movementSpeed);
-            }
-
-            */
 
         }
 
@@ -207,34 +177,4 @@ public class RTSCameraController : MonoBehaviour
     }
 
 
-
-    private void HandleMouseDragInput()
-    {
-        if (/*Input.GetMouseButtonDown(2) */InputSingleton.Instance.inputActions.Player.MBM.WasPressedThisFrame()  && EventSystem.current.IsPointerOverGameObject() == false)
-        {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            Ray ray = Camera.main.ScreenPointToRay(InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>());
-
-            float entry;
-
-            if (plane.Raycast(ray, out entry))
-            {
-                dragStartPosition = ray.GetPoint(entry);
-            }
-        }
-        if (/*Input.GetMouseButton(2) */ InputSingleton.Instance.inputActions.Player.MBM.IsPressed() && EventSystem.current.IsPointerOverGameObject() == false)
-        {
-            Plane plane = new Plane(Vector3.up, Vector3.zero);
-            Ray ray = Camera.main.ScreenPointToRay(InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>());
-
-            float entry;
-
-            if (plane.Raycast(ray, out entry))
-            {
-                dragCurrentPosition = ray.GetPoint(entry);
-
-                newPosition = transform.position + dragStartPosition - dragCurrentPosition;
-            }
-        }
-    }
 }
