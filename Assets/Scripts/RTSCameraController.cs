@@ -59,7 +59,7 @@ public class RTSCameraController : MonoBehaviour
         // Allow Camera to follow Target
         if (followTransform != null)
         {
-            transform.position = followTransform.position;
+          //  transform.position = followTransform.position;
         }
         // Let us control Camera
         else
@@ -75,7 +75,16 @@ public class RTSCameraController : MonoBehaviour
 
     void HandleCameraMovement()
     {
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
 
+        // Eliminamos componente vertical
+        forward.y = 0f;
+        right.y = 0f;
+
+        // Normalizamos para evitar velocidades raras
+        forward.Normalize();
+        right.Normalize();
 
         // Keyboard Control
         if (moveWithKeyboad)
@@ -91,7 +100,9 @@ public class RTSCameraController : MonoBehaviour
 
 
             Vector2 input = InputSingleton.Instance.inputActions.Player.Move.ReadValue<Vector2>();
-            Vector3 moveDir = (transform.forward * input.y + transform.right * input.x).normalized;
+
+            Vector3 moveDir = (forward * input.y + right * input.x).normalized;
+
 
             newPosition += moveDir * movementSpeed;
 
@@ -102,34 +113,36 @@ public class RTSCameraController : MonoBehaviour
         if (moveWithEdgeScrolling)
         {
 
+            Vector2 mousePos = InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>();
+
             // Move Right
-            if (InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>().x > Screen.width - edgeSize)
+            if (mousePos.x > Screen.width - edgeSize)
             {
-                newPosition += (transform.right * movementSpeed);
+                newPosition += right * movementSpeed;
                 ChangeCursor(CursorArrow.RIGHT);
                 isCursorSet = true;
             }
 
             // Move Left
-            else if (InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>().x < edgeSize)
+            else if (mousePos.x < edgeSize)
             {
-                newPosition += (transform.right * -movementSpeed);
+                newPosition += -right * movementSpeed;
                 ChangeCursor(CursorArrow.LEFT);
                 isCursorSet = true;
             }
 
             // Move Up
-            else if (InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>().y > Screen.height - edgeSize)
+            else if (mousePos.y > Screen.height - edgeSize)
             {
-                newPosition += (transform.forward * movementSpeed);
+                newPosition += forward * movementSpeed;
                 ChangeCursor(CursorArrow.UP);
                 isCursorSet = true;
             }
 
             // Move Down
-            else if (InputSingleton.Instance.inputActions.Player.MoveMouse.ReadValue<Vector2>().y < edgeSize)
+            else if (mousePos.y < edgeSize)
             {
-                newPosition += (transform.forward * -movementSpeed);
+                newPosition += -forward * movementSpeed;
                 ChangeCursor(CursorArrow.DOWN);
                 isCursorSet = true;
             }
@@ -141,6 +154,7 @@ public class RTSCameraController : MonoBehaviour
                     isCursorSet = false;
                 }
             }
+
         }
 
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementSensitivity);
