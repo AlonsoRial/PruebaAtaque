@@ -39,6 +39,8 @@ public class RTSCameraController : MonoBehaviour
     private Vector2 vector_rotacion; //Vector que guarda el movmimiento del raton
     [SerializeField] private float distance;    // Distancia de la cámara al jugador
 
+    private Vector3 targetFollowPosition;
+
     CursorArrow currentCursor = CursorArrow.DEFAULT;
     enum CursorArrow
     {
@@ -51,6 +53,11 @@ public class RTSCameraController : MonoBehaviour
 
     private void Start()
     {
+        if (followTransform != null)
+        {
+            targetFollowPosition = followTransform.position;
+        }
+
         instance = this;
         angle = transform.eulerAngles.y;
         newPosition = transform.position;
@@ -88,7 +95,20 @@ public class RTSCameraController : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(30f, angle, 0f);
         Vector3 offset = rotation * new Vector3(0, 0, -distance);
 
+        // Suavizado del movimiento del target
+        if (followTransform != null)
+        {
+            followTransform.position = Vector3.Lerp(
+                followTransform.position,
+                targetFollowPosition,
+                Time.deltaTime * movementSensitivity
+            );
+        }
+
         transform.position = followTransform.position + offset;
+
+
+
         transform.rotation = rotation;
     }
 
@@ -127,7 +147,8 @@ public class RTSCameraController : MonoBehaviour
             //newPosition += moveDir * movementSpeed;
             if (followTransform != null)
             {
-                followTransform.position += moveDir * movementSpeed;
+                //followTransform.position += moveDir * movementSpeed;
+                targetFollowPosition += moveDir * movementSpeed;
             }
             else
             {
@@ -149,7 +170,8 @@ public class RTSCameraController : MonoBehaviour
 
                 if (followTransform != null)
                 {
-                    followTransform.position += right * movementSpeed;
+                   // followTransform.position += right * movementSpeed;
+                    targetFollowPosition += right * movementSpeed;
                 }
                 else
                 {
@@ -167,7 +189,8 @@ public class RTSCameraController : MonoBehaviour
 
                 if (followTransform != null)
                 {
-                    followTransform.position += -right * movementSpeed;
+                    //followTransform.position += -right * movementSpeed;
+                    targetFollowPosition += -right * movementSpeed;
                 }
                 else
                 {
@@ -184,7 +207,8 @@ public class RTSCameraController : MonoBehaviour
                 // newPosition += forward * movementSpeed;
                 if (followTransform != null)
                 {
-                    followTransform.position += forward * movementSpeed;
+                    //followTransform.position += forward * movementSpeed;
+                    targetFollowPosition += forward * movementSpeed;
                 }
                 else
                 {
@@ -202,7 +226,8 @@ public class RTSCameraController : MonoBehaviour
 
                 if (followTransform != null)
                 {
-                    followTransform.position += -forward * movementSpeed;
+                   // followTransform.position += -forward * movementSpeed;
+                    targetFollowPosition += -forward * movementSpeed;
                 }
                 else
                 {
